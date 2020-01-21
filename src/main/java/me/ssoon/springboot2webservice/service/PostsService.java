@@ -1,8 +1,11 @@
 package me.ssoon.springboot2webservice.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import me.ssoon.springboot2webservice.domain.posts.Posts;
 import me.ssoon.springboot2webservice.domain.posts.PostsRepository;
+import me.ssoon.springboot2webservice.web.dto.PostListResponseDto;
 import me.ssoon.springboot2webservice.web.dto.PostsResponseDto;
 import me.ssoon.springboot2webservice.web.dto.PostsSaveRequestDto;
 import me.ssoon.springboot2webservice.web.dto.PostsUpdateRequestDto;
@@ -32,5 +35,12 @@ public class PostsService {
     Posts entity = postsRepository.findById(id)
         .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 없습니다. id=" + id));
     return new PostsResponseDto(entity);
+  }
+
+  @Transactional(readOnly = true)
+  public List<PostListResponseDto> findAllDesc() {
+    return postsRepository.findAllDesc().stream()
+        .map(PostListResponseDto::new)
+        .collect(Collectors.toList());
   }
 }
