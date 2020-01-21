@@ -9,11 +9,12 @@ import javax.persistence.Id;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import me.ssoon.springboot2webservice.domain.BaseTimeEntity;
 
 @Getter
 @NoArgsConstructor
 @Entity
-public class Posts {
+public class Posts extends BaseTimeEntity {
 
   @Id
   @GeneratedValue(strategy = IDENTITY)
