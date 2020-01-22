@@ -2,7 +2,9 @@ package me.ssoon.springboot2webservice.web;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.OK;
 
 import java.util.List;
@@ -93,5 +95,30 @@ class PostsApiControllerTest {
     List<Posts> postsList = postsRepository.findAll();
     assertThat(postsList.get(0).getTitle()).isEqualTo(expectedTitle);
     assertThat(postsList.get(0).getContent()).isEqualTo(expectedContent);
+  }
+
+  @Test
+  void Posts_삭제된다() throws Exception {
+    //given
+    Posts savedPosts = postsRepository.save(Posts.builder()
+        .title("title")
+        .content("content")
+        .author("author")
+        .build());
+
+
+    String url = "http://localhost:" + port + "/api/v1/posts/" + savedPosts.getId();
+    HttpEntity<Posts> deletedEntity = new HttpEntity<>(savedPosts);
+
+    //when
+    ResponseEntity<Long> responseEntity = restTemplate
+        .exchange(url, DELETE, deletedEntity, Long.class);
+
+    //then
+    assertThat(responseEntity.getStatusCode()).isEqualTo(OK);
+    assertThat(responseEntity.getBody()).isEqualTo(1L);
+
+    List<Posts> postsList = postsRepository.findAll();
+    assertThat(postsList.size()).isEqualTo(0);
   }
 }
